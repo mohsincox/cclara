@@ -8,6 +8,7 @@ use App\Http\Controllers\TodoController;
 use App\Http\Controllers\ContentController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,6 +78,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/categories/{category}', [CategoryController::class, 'update']);
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy']);
     Route::get('/categories/{category}', [CategoryController::class, 'show']);
+
+    // Product CRUD routes
+    Route::get('/products', [ProductController::class, 'index']);
+    Route::post('/products', [ProductController::class, 'store']);
+    Route::get('/products/{product}', [ProductController::class, 'show']);
+    Route::put('/products/{product}', [ProductController::class, 'update']);
+    Route::delete('/products/{product}', [ProductController::class, 'destroy']);
 });
 
 Route::get('/todos',           [TodoController::class, 'index']);
@@ -84,3 +92,34 @@ Route::post('/todos',          [TodoController::class, 'store']);
 Route::put('/todos/reorder',   [TodoController::class, 'reorder']);
 Route::put('/todos/{id}',      [TodoController::class, 'update']);
 Route::delete('/todos/{id}',   [TodoController::class, 'destroy']);
+
+Route::get('/token-info', function () {
+    // Extract the secret part if your token includes the ID prefix (e.g., "3|secret...")
+    $plainTextToken = '39|bYHeJ8QbmpM8ExhtwdfUJnKycKsnyakr1qoyJKzy078bdbd0';
+
+    if (str_contains($plainTextToken, '|')) {
+        [$id, $plainTextToken] = explode('|', $plainTextToken, 2);
+    }
+
+    // Compute the SHA-256 hash just like Sanctum does
+    $hashedToken = hash('sha256', $plainTextToken);
+
+    // Find the token row and its assigned user
+    $tokenModel = Laravel\Sanctum\PersonalAccessToken::findToken($plainTextToken);
+
+    if ($tokenModel) {
+        echo "User ID: " . $tokenModel->tokenable_id . "\n";
+        echo "<pre>";
+        print_r($tokenModel->tokenable->toArray());
+        echo "</pre>";
+    } else {
+        echo "Invalid or expired token.";
+    }
+});
+
+Route::get('/personal-access-tokens-table', function () {
+    $accessToken = Laravel\Sanctum\PersonalAccessToken::findToken("bYHeJ8QbmpM8ExhtwdfUJnKycKsnyakr1qoyJKzy078bdbd0");
+    echo "<pre>";
+    print_r($accessToken->tokenable); 
+    echo "<pre>";
+});
