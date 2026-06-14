@@ -9,6 +9,7 @@ use App\Http\Controllers\ContentController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ChapterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -85,6 +86,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/products/{product}', [ProductController::class, 'show']);
     Route::put('/products/{product}', [ProductController::class, 'update']);
     Route::delete('/products/{product}', [ProductController::class, 'destroy']);
+
+    // Chapter CRUD routes
+    Route::get('/chapters', [ChapterController::class, 'index']);
+    Route::post('/chapters', [ChapterController::class, 'store']);
+    Route::get('/chapters/{chapter}', [ChapterController::class, 'show']);
+    Route::put('/chapters/{chapter}', [ChapterController::class, 'update']);
+    Route::delete('/chapters/{chapter}', [ChapterController::class, 'destroy']);
 });
 
 Route::get('/todos',           [TodoController::class, 'index']);
